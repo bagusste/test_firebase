@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "539719533651",
+    "firebase_url": "https://giscustomer-default-rtdb.firebaseio.com",
+    "project_id": "giscustomer",
+    "storage_bucket": "giscustomer.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:539719533651:android:6810df70b2ac2432a572a6",
+        "android_client_info": {
+          "package_name": "com.example.test_firebase"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "539719533651-hfb7d7cgjrfhv75mt5iqp69d27tcjg96.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDTVP2KfoJPtrsCLDJTJsG8_lcyXa88zUo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "539719533651-hfb7d7cgjrfhv75mt5iqp69d27tcjg96.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
