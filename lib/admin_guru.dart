@@ -12,6 +12,8 @@ class AdminGuruPage extends StatefulWidget {
 
 class _AdminGuruPageState extends State<AdminGuruPage> {
   TextEditingController _searchController = TextEditingController();
+  List _allResults = [];
+  List _resultsList = [];
   var db = FirebaseFirestore.instance;
 
   @override
@@ -21,8 +23,55 @@ class _AdminGuruPageState extends State<AdminGuruPage> {
     _searchController.addListener(_onSearchChanged);
   }
 
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    _searchController.removeListener(_onSearchChanged);
+    _searchController.dispose();
+    super.dispose();
+  }
+
+  @override
+  void didChangeDependencies() {
+    // TODO: implement didChangeDependencies
+    super.didChangeDependencies();
+    readGuru();
+  }
+
   _onSearchChanged() {
-    print(_searchController.text);
+    searchResultsList();
+  }
+
+  searchResultsList() {
+    var _showResults = [];
+    if (_searchController.text != "") {
+      for (var guru in _allResults) {
+        var nama = guru['nama'].toLowerCase();
+        var nip = guru['nip'].toLowerCase();
+        if (nama.contains(_searchController.text.toLowerCase()) ||
+            nip.contains(_searchController.text.toLowerCase())) {
+          _showResults.add(guru);
+        }
+      }
+    } else {
+      _showResults = List.from(_allResults);
+    }
+    setState(() {
+      _resultsList = _showResults;
+    });
+  }
+
+  readGuru() async {
+    var _data = await FirebaseFirestore.instance
+        .collection('guru')
+        .orderBy('nama')
+        .get();
+
+    setState(() {
+      _allResults = _data.docs;
+    });
+    searchResultsList();
+    return "complete";
   }
 
   @override
@@ -71,36 +120,23 @@ class _AdminGuruPageState extends State<AdminGuruPage> {
                 ),
               ),
               Expanded(
-                child: StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
-                    stream: db.collection("guru").snapshots(),
-                    builder: (context, snapshots) {
-                      if (snapshots.connectionState ==
-                          ConnectionState.waiting) {
-                        return const Center(
-                            child: CircularProgressIndicator(
-                          color: Colors.blue,
-                          strokeWidth: 8,
-                        ));
-                      }
-                      var data = snapshots.data!.docs;
-                      return ListView.builder(
-                        itemCount: data.length,
-                        itemBuilder: (context, index) {
-                          return ListTile(
-                            title: Text(
-                              data[index]['nama'],
-                            ),
-                            subtitle: Text("NIP. " + data[index]['nip']),
-                            trailing: Icon(Icons.chevron_right),
-                            onTap: () {
-                              Navigator.of(context).push(MaterialPageRoute(
-                                  builder: (context) => AdminDetailGuruPage(
-                                      nip: data[index]['nip'])));
-                            },
-                          );
-                        },
-                      );
-                    }),
+                child: ListView.builder(
+                  itemCount: _resultsList.length,
+                  itemBuilder: (BuildContext context, int index) {
+                    return ListTile(
+                      title: Text(
+                        _resultsList[index]['nama'],
+                      ),
+                      subtitle: Text("NIP. " + _resultsList[index]['nip']),
+                      trailing: Icon(Icons.chevron_right),
+                      onTap: () {
+                        Navigator.of(context).push(MaterialPageRoute(
+                            builder: (context) => AdminDetailGuruPage(
+                                nip: _resultsList[index]['nip'])));
+                      },
+                    );
+                  },
+                ),
               ),
             ],
           ),
